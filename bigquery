@@ -11,3 +11,21 @@ WHERE channelGrouping in ('Organic Search','Direct')
 GROUP BY date, channel
 ORDER BY transactions DESC
 LIMIT 1000
+
+-- query added with CASE statement to nest sub queuries
+
+SELECT 
+date,
+channelGrouping AS channel,
+sum(totals.visits) AS visits,
+CASE WHEN sum(totals.visits) > 0
+  THEN sum(totals.transactions)/sum(totals.visits) 
+  ELSE 0 END AS con_rate,
+sum(totals.transactions) AS transactions,
+sum(totals.transactionRevenue) AS revenue,
+sum(totals.transactionRevenue) / sum(totals.transactions) AS aov,
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+WHERE channelGrouping IN ('Organic Search','Direct')
+GROUP BY date, channel
+ORDER BY transactions DESC
+LIMIT 1000
