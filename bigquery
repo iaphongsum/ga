@@ -38,7 +38,7 @@ GROUP BY date, channel
 ORDER BY transactions DESC
 LIMIT 1000
 
--- query added with CASE statement to nest sub queuries
+-- Using math + CASE statements in BigQuery
 
 SELECT 
 date,
@@ -55,3 +55,19 @@ WHERE channelGrouping IN ('Organic Search','Direct')
 GROUP BY date, channel
 ORDER BY transactions DESC
 LIMIT 1000
+
+
+-- Using GROUP BY in BigQuery to aggregate metrics
+
+SELECT 
+date,
+channelGrouping AS channel,
+sum(totals.visits) AS visits,
+sum(totals.transactions) AS transactions,
+sum(totals.transactionRevenue) AS revenue
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+WHERE channelGrouping IN ('Organic Search','Direct')
+GROUP BY date, channel
+ORDER BY transactions DESC
+LIMIT 1000
+
