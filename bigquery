@@ -11,6 +11,19 @@ FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
 WHERE totals.transactions IS NOT NULL
 LIMIT 1000
 
+-- 2nd query WHERE xxx in (OO, OO)
+
+SELECT
+date,
+channelGrouping as channel,
+totals.visits,
+totals.transactions,
+totals.transactionRevenue
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+WHERE channelGrouping in ('Organic Search', 'Direct')
+ORDER BY transactionRevenue DESC
+LIMIT 1000
+
 -- standard query on google analytics - ecomm
 
 SELECT 
