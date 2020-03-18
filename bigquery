@@ -71,3 +71,22 @@ GROUP BY date, channel
 ORDER BY transactions DESC
 LIMIT 1000
 
+-- Aggregate by day, week and month in BigQuery / nest query
+
+SELECT
+date,
+EXTRACT(DAY from date) AS date_of_month,
+EXTRACT(WEEK from date) AS week_of_year,
+FORMAT_DATE("%Y-%m", date) AS yyyymm
+
+FROM (
+
+  SELECT 
+  PARSE_DATE("%Y%m%d", date) date,
+  channelGrouping,
+  totals.visits
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+  WHERE channelGrouping in ('Organic Search', 'Direct')
+  ORDER BY totals.visits
+  LIMIT 1000
+)
