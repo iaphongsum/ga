@@ -105,5 +105,26 @@ FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
 CROSS JOIN UNNEST (hits)
 WHERE isEntrance = true
 
+-- Joining tables in BigQuery SQL
+
+SELECT  
+
+zip.state_code,
+sum(census.population) population
+
+FROM `bigquery-public-data.census_bureau_usa.population_by_zip_2010` census 
+LEFT JOIN `bigquery-public-data.geo_us_boundaries.zip_codes` zip
+ON (
+    census.zipcode = zip.zip_code
+)
+
+WHERE census.minimum_age IS NULL
+AND census.maximum_age IS NULL
+AND census.gender IS NULL
+
+GROUP BY state_code
+ORDER BY state_code
+
+LIMIT 1000
 
 
