@@ -130,6 +130,34 @@ LIMIT 1000
 
 -- WITH statements in BigQuery SQL
 
+WITH census AS (
+SELECT  
+zipcode,
+population
+FROM `bigquery-public-data.census_bureau_usa.population_by_zip_2010` 
+WHERE minimum_age IS NULL
+AND maximum_age IS NULL
+AND gender IS NULL
+),
+
+zip AS (
+SELECT  
+zip_code,
+state_code
+FROM `bigquery-public-data.geo_us_boundaries.zip_codes` 
+)
+
+SELECT 
+zip.state_code,
+sum(census.population)population
+FROM census
+LEFT JOIN zip
+ON (
+census.zipcode = zip.zip_code
+)
+
+GROUP BY state_code
+ORDER BY state_code ASC
 
 
 -- Deduping query results in BigQuery
