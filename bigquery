@@ -159,8 +159,28 @@ census.zipcode = zip.zip_code
 GROUP BY state_code
 ORDER BY state_code ASC
 
+--Using analytic (window) functions in BigQuery
+
+SELECT
+date,
+channelGrouping,
+pageviews,
+pageviews / sum(pageviews) over w1 AS pct_of_pageviews,
+avg(pageviews) OVER w1 AS avg_pageviews
+
+FROM (
+SELECT
+date,
+channelGrouping,
+sum(totals.pageViews) AS pageviews
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+GROUP BY channelGrouping, date
+)
+WINDOW w1 AS (PARTITION BY date)
+ORDER BY pct_of_pageviews DESC
 
 -- Deduping query results in BigQuery
+
 SELECT * FROM (
 
 SELECT
