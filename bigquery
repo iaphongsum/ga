@@ -128,3 +128,25 @@ ORDER BY state_code
 LIMIT 1000
 
 
+-- WITH statements in BigQuery SQL
+
+
+
+-- Deduping query results in BigQuery
+SELECT * FROM (
+
+SELECT
+date,
+channelGrouping,
+totals.hits,
+visitStartTime,
+first_value(visitStartTime) OVER (PARTITION BY channelGrouping ORDER BY visitStartTime desc) last_value
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+
+)
+
+WHERE visitStartTime = last_value
+ORDER BY channelGrouping ASC
+
+
+
