@@ -1,0 +1,31 @@
+WITH base_table AS (
+  SELECT
+     visitId
+     , visitNumber
+     , hits.hitNumber AS hitNumber
+     , hits.page.pagePath AS pagePath
+     , hits.page.hostname AS hostname
+     , totals.transactionRevenue / 1000000 AS transactionRevenue
+  FROM
+    `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+    , UNNEST (hits) AS hits
+  WHERE
+    totals.transactionRevenue IS NOT NULL
+  ORDER BY 1, 2, 3
+), first_pagePath_table AS (
+SELECT
+  visitId
+  , pagePath AS first_pagePath
+  , transactionRevenue
+FROM base_table
+WHERE hitNumber = 1
+)
+SELECT
+  first_pagePath
+  , COUNT (first_pagePath) AS nbr_first_pagePath
+  , SUM (transactionRevenue) AS total_rev
+  , SUM (transactionRevenue) / COUNT (first_pagePath) AS avg_rev
+FROM first_pagePath_table
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 10
